@@ -1,12 +1,9 @@
-import sys
-
 from Questão_1 import ArrayStack
-def remove_all(S):
-    if S.is_empty():
+def remove_all(s : ArrayStack):
+    if s.is_empty():
         return
-    else:
-        S.pop()
-    remove_all(S)
+    s.pop()
+    remove_all(s)
 
 S = ArrayStack()
 S.push(1)
