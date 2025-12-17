@@ -1,0 +1,67 @@
+class AVL:
+    class Node:
+        def __init__(self, key):
+            self.key = key
+            self.left = None
+            self.right = None
+            self.height = 1
+
+    def __init__(self):
+        self.root = None
+
+    def _height(self, n): return n.height if n else 0
+    def _update(self, n): n.height = 1 + max(self._height(n.left), self._height(n.right))
+    def _bf(self, n): return self._height(n.left) - self._height(n.right)
+
+    def _rot_right(self, y):
+        x = y.left; T2 = x.right
+        x.right = y; y.left = T2
+        self._update(y); self._update(x)
+        return x
+
+    def _rot_left(self, x):
+        y = x.right; T2 = y.left
+        y.left = x; x.right = T2
+        self._update(x); self._update(y)
+        return y
+
+    def _rebalance(self, node, key):
+        self._update(node)
+        b = self._bf(node)
+        if b > 1 and key < node.left.key:
+            return self._rot_right(node)
+        if b < -1 and key > node.right.key:
+            return self._rot_left(node)
+        if b > 1 and key > node.left.key:
+            node.left = self._rot_left(node.left)
+            return self._rot_right(node)
+        if b < -1 and key < node.right.key:
+            node.right = self._rot_right(node.right)
+            return self._rot_left(node)
+        return node
+
+    def insert(self, key):
+        def _ins(n, key):
+            if n is None: return AVL.Node(key)
+            if key < n.key: n.left = _ins(n.left, key)
+            elif key > n.key: n.right = _ins(n.right, key)
+            else: return n
+            return self._rebalance(n, key)
+        self.root = _ins(self.root, key)
+
+    def _print(self, n, level=0):
+        if not n: return
+        self._print(n.right, level+1)
+        print("   "*level + str(n.key))
+        self._print(n.left, level+1)
+    def print_tree(self): self._print(self.root)
+
+base_keys = [44,17,78,32,50,88,48,62,54]  
+T = AVL()
+for k in base_keys:
+    T.insert(k)
+print("Árvore antes de inserir 52:")
+T.print_tree()
+T.insert(52)
+print("\nÁrvore depois de inserir 52:")
+T.print_tree()
